@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Chat Assistant — Claude</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="app">
+    <header class="app-header">
+      <h1>🤖 AI Chat Assistant</h1>
+      <button id="resetBtn" class="reset-btn">New chat</button>
+    </header>
+
+    <div id="chatWindow" class="chat-window">
+      <div class="message assistant">
+        <div class="bubble">Hi! I'm your AI assistant, powered by Claude. Ask me anything.</div>
+      </div>
+    </div>
+
+    <form id="chatForm" class="chat-form">
+      <input
+        type="text"
+        id="messageInput"
+        placeholder="Type your message..."
+        autocomplete="off"
+        required
+      />
+      <button type="submit" id="sendBtn">Send</button>
+    </form>
+  </div>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
