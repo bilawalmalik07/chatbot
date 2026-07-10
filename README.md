@@ -92,12 +92,12 @@ ai-chat-assistant/
    keeps track of conversation history automatically.
 4. Gemini's reply is returned as JSON and rendered in the chat window.
 
-## Notes
+## Usage Guide
 
-- The model used is set via `GEMINI_MODEL` in `.env` (defaults to
-  `gemini-2.5-flash`, which has the most generous free-tier limits).
-- Free tier limits are roughly 10 requests/minute and a daily cap — plenty
-  for a class project demo. If you hit a 429 error, just wait a minute.
-- Conversation history is stored in-memory (resets when the server
-  restarts, or when you click "New chat").
-- Never commit your real `.env` file — it's excluded via `.gitignore`.
+1. Make sure the app is running (see Setup Instructions above) and
+   `http://127.0.0.1:5000` is open in your browser.
+2. Type a message in the input box at the bottom and press **Send** (or hit Enter).
+3. The assistant's response will appear in the chat window above.
+4. Continue the conversation — the assistant remembers earlier messages
+   in the same session.
+5. Click **New chat** at the top to clear the conversation and start fresh.
