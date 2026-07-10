@@ -2,7 +2,7 @@
 AI Chat Assistant - Flask web app powered by the Google Gemini API.
 
 Run:
-    python app.py
+    python3 app.py
 Then open http://127.0.0.1:5000 in your browser.
 """
 
