@@ -5,20 +5,60 @@
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background: #0b1120;
+  background: #05070d;
   height: 100vh;
   display: flex;
+  align-items: center;
   justify-content: center;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.bg-decor {
+  position: fixed;
+  top: 0;
+  height: 100vh;
+  width: 140px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  font-size: 34px;
+  opacity: 0.12;
+  filter: grayscale(0.3);
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+}
+
+.bg-decor-left {
+  left: 0;
+}
+
+.bg-decor-right {
+  right: 0;
+}
+
+@media (max-width: 900px) {
+  .bg-decor {
+    display: none;
+  }
 }
 
 .app {
   width: 100%;
   max-width: 720px;
-  height: 100vh;
+  height: 90vh;
   display: flex;
   flex-direction: column;
   background: #0f172a;
-  box-shadow: 0 0 30px rgba(56, 189, 248, 0.08);
+  border: 1px solid #000;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  position: relative;
+  z-index: 1;
 }
 
 .app-header {
@@ -26,7 +66,7 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 16px 20px;
-  border-bottom: 1px solid #1e293b;
+  border-bottom: 1px solid #000;
   background: linear-gradient(135deg, #1e3a8a 0%, #0ea5e9 100%);
   color: white;
 }
@@ -100,7 +140,7 @@ body {
   display: flex;
   gap: 10px;
   padding: 16px 20px;
-  border-top: 1px solid #1e293b;
+  border-top: 1px solid #000;
   background: #0f172a;
 }
 
