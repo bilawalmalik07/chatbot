@@ -1,4 +1,4 @@
-# AI Chat Assistant (Gemini API + Flask) (CHATBOT I AM)
+# AI Chat Assistant (Gemini API + Flask)
 
 A simple web-based AI chat assistant that lets users ask questions and get
 responses from Google's Gemini API. Built with Flask (Python) for the
