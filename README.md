@@ -22,7 +22,7 @@ A web-based AI chat assistant powered by Google's Gemini API. Built with Flask f
 
 ```bash
 git clone <your-repo-url>
-cd starix-chatbot
+cd chatbot
 ```
 
 ### 2. Create and activate a virtual environment
@@ -66,7 +66,7 @@ Open your browser at http://127.0.0.1:5000
 ## Project Structure
 
 ```
-starix-chatbot/
+chatbot/
 ├── app.py                  # Flask backend, Gemini chat logic
 ├── templates/
 │   └── index.html          # Chat UI markup
