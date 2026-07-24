@@ -1,5 +1,5 @@
 """
-AI Chat Assistant - Flask web app powered by the Google Gemini API.
+AI Chat Assistant - Flask web app powered by the Gemini API (Google).
 
 Run:
     python3 app.py
@@ -9,9 +9,7 @@ Then open http://127.0.0.1:5000 in your browser.
 import os
 from flask import Flask, render_template, request, jsonify
 from dotenv import load_dotenv
-from google import genai
-from google.genai import types
-from google.genai.errors import APIError
+import google.generativeai as genai
 
 # Load environment variables from .env
 load_dotenv()
@@ -22,21 +20,20 @@ MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
 if not API_KEY:
     raise RuntimeError(
         "GEMINI_API_KEY is not set. Create a .env file (see .env.example) "
-        "and add your Gemini API key (free, no card needed, from "
-        "https://aistudio.google.com/apikey)."
+        "and add your Gemini API key."
     )
 
-client = genai.Client(api_key=API_KEY)
-
-app = Flask(__name__)
+genai.configure(api_key=API_KEY)
 
 SYSTEM_PROMPT = "You are a helpful, friendly AI assistant. Keep answers clear and concise."
 
-# Simple in-memory chat session (per server process, single user demo)
-chat_session = client.chats.create(
-    model=MODEL,
-    config=types.GenerateContentConfig(system_instruction=SYSTEM_PROMPT),
-)
+model = genai.GenerativeModel(MODEL, system_instruction=SYSTEM_PROMPT)
+
+app = Flask(__name__)
+
+# Simple in-memory conversation history (per server process, single user demo)
+# Gemini expects roles "user" and "model", with content under "parts"
+conversation_history = []
 
 
 @app.route("/")
@@ -52,23 +49,22 @@ def chat():
     if not user_message:
         return jsonify({"error": "Message cannot be empty."}), 400
 
-    try:
-        response = chat_session.send_message(user_message)
-        return jsonify({"reply": response.text})
+    conversation_history.append({"role": "user", "parts": [user_message]})
 
-    except APIError as e:
-        return jsonify({"error": f"Gemini API error: {str(e)}"}), 500
+    try:
+        response = model.generate_content(conversation_history)
+        assistant_reply = response.text
+        conversation_history.append(
+            {"role": "model", "parts": [assistant_reply]})
+        return jsonify({"reply": assistant_reply})
+
     except Exception as e:
-        return jsonify({"error": f"Unexpected error: {str(e)}"}), 500
+        return jsonify({"error": f"Gemini API error: {str(e)}"}), 500
 
 
 @app.route("/api/reset", methods=["POST"])
 def reset():
-    global chat_session
-    chat_session = client.chats.create(
-        model=MODEL,
-        config=types.GenerateContentConfig(system_instruction=SYSTEM_PROMPT),
-    )
+    conversation_history.clear()
     return jsonify({"status": "conversation reset"})
 
 

@@ -1,63 +1,84 @@
-const chatWindow = document.getElementById("chatWindow");
-const chatForm = document.getElementById("chatForm");
-const messageInput = document.getElementById("messageInput");
-const sendBtn = document.getElementById("sendBtn");
-const resetBtn = document.getElementById("resetBtn");
+const log = document.getElementById('log');
+const form = document.getElementById('composerForm');
+const input = document.getElementById('messageInput');
+const sendBtn = document.getElementById('sendBtn');
+const resetBtn = document.getElementById('resetBtn');
 
-function addMessage(text, role) {
-  const wrapper = document.createElement("div");
-  wrapper.className = `message ${role}`;
-
-  const bubble = document.createElement("div");
-  bubble.className = "bubble";
-  bubble.textContent = text;
-
-  wrapper.appendChild(bubble);
-  chatWindow.appendChild(wrapper);
-  chatWindow.scrollTop = chatWindow.scrollHeight;
+function scrollToBottom() {
+  log.scrollTop = log.scrollHeight;
 }
 
-async function sendMessage(message) {
-  const res = await fetch("/api/chat", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message }),
-  });
-  return res.json();
+function addMessage(role, text) {
+  const row = document.createElement('div');
+  row.className = `row ${role}`;
+  const note = document.createElement('div');
+  note.className = 'note';
+  const p = document.createElement('p');
+  p.textContent = text;
+  note.appendChild(p);
+  row.appendChild(note);
+  log.appendChild(row);
+  scrollToBottom();
 }
 
-chatForm.addEventListener("submit", async (e) => {
+function showTyping() {
+  const row = document.createElement('div');
+  row.className = 'row bot typing';
+  row.id = 'typingRow';
+  row.innerHTML = `<div class="note"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>`;
+  log.appendChild(row);
+  scrollToBottom();
+}
+
+function removeTyping() {
+  const row = document.getElementById('typingRow');
+  if (row) row.remove();
+}
+
+form.addEventListener('submit', async (e) => {
   e.preventDefault();
-  const message = messageInput.value.trim();
+  const message = input.value.trim();
   if (!message) return;
 
-  addMessage(message, "user");
-  messageInput.value = "";
+  addMessage('user', message);
+  input.value = '';
   sendBtn.disabled = true;
-
-  addMessage("Thinking...", "assistant");
-  const thinkingBubble = chatWindow.lastChild;
+  showTyping();
 
   try {
-    const data = await sendMessage(message);
-    thinkingBubble.remove();
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message }),
+    });
+    const data = await res.json();
+    removeTyping();
 
-    if (data.error) {
-      addMessage(data.error, "error");
+    if (!res.ok || data.error) {
+      addMessage('error', data.error || 'Something went wrong.');
     } else {
-      addMessage(data.reply, "assistant");
+      addMessage('bot', data.reply);
     }
   } catch (err) {
-    thinkingBubble.remove();
-    addMessage("Network error: could not reach the server.", "error");
+    removeTyping();
+    addMessage('error', 'Could not reach the server. Is it running?');
   } finally {
     sendBtn.disabled = false;
-    messageInput.focus();
+    input.focus();
   }
 });
 
-resetBtn.addEventListener("click", async () => {
-  await fetch("/api/reset", { method: "POST" });
-  chatWindow.innerHTML = "";
-  addMessage("New conversation started. How can I help?", "assistant");
+resetBtn.addEventListener('click', async () => {
+  try {
+    await fetch('/api/reset', { method: 'POST' });
+  } catch (err) {
+    // ignore network errors on reset, still clear the visible log
+  }
+  log.innerHTML = `
+    <div class="row bot">
+      <div class="note"><p>Hi — I'm your AI assistant. Ask me anything.</p></div>
+    </div>`;
+  input.focus();
 });
+
+input.focus();
